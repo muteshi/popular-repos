@@ -1,10 +1,6 @@
-import React, { Component, Fragment } from "react";
-import { Redirect } from "react-router";
+import React, { Component } from "react";
 
-import {
-  getRepositories,
-  getRepositoryStars,
-} from "../../services/repoService";
+import { getRepositories } from "../../services/repoService";
 import RepoCard from "./Repo/Repo";
 
 class Repositories extends Component {
@@ -18,7 +14,8 @@ class Repositories extends Component {
     const reposFromStorage = JSON.parse(localStorage.getItem("repos") || "[]");
     if (reposFromStorage.length === 0) {
       const { data: repos } = await getRepositories();
-      this.setState({ repos });
+      const newData = repos.items;
+      this.setState({ repos: newData });
     } else {
       this.setState({ bookmarks: reposFromStorage });
     }
@@ -26,24 +23,19 @@ class Repositories extends Component {
 
   async componentDidUpdate(prevProps, prevState) {
     if (prevState.repos !== this.state.repos) {
-      const updatedRepos = this.state.repos.map(async (repo) => {
-        const { data: stars } = await getRepositoryStars(repo.stargazers_url);
-        const numOfStars = stars.length;
+      const updatedRepos = this.state.repos.map((repo) => {
         return {
           id: repo.id,
           owner: repo.owner,
+          url: repo.url,
           title: repo.name,
           description: repo.description,
           isBookmarked: false,
-          url: repo.url,
-          numOfStars,
+          numOfStars: repo.stargazers_count,
         };
       });
-      this.setState({ bookmarks: await Promise.all(updatedRepos) });
-      localStorage.setItem(
-        "repos",
-        JSON.stringify(await Promise.all(updatedRepos))
-      );
+      this.setState({ bookmarks: updatedRepos });
+      localStorage.setItem("repos", JSON.stringify(updatedRepos));
     }
   }
 
@@ -56,7 +48,6 @@ class Repositories extends Component {
   };
 
   render() {
-    console.log(this.props);
     const repos = this.state.bookmarks
       .sort((a, b) => b.numOfStars - a.numOfStars)
       .slice(0, 10)

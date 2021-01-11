@@ -1,3 +1,4 @@
+import React, { useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Card from "@material-ui/core/Card";
 import CardActions from "@material-ui/core/CardActions";
@@ -26,8 +27,14 @@ const useStyles = makeStyles({
   },
 });
 
-export default function RepoCard(props) {
+export default function RepoCardDetails(props) {
   const classes = useStyles();
+
+  const repoId = props.match.params.repoId;
+
+  const reposFromStorage = JSON.parse(localStorage.getItem("repos"));
+
+  const repo = reposFromStorage.filter((r) => r.id === +repoId);
 
   return (
     <Card className={classes.root} variant="outlined">
@@ -37,26 +44,26 @@ export default function RepoCard(props) {
           color="textSecondary"
           gutterBottom
         >
-          {props.owner}
+          {repo[0].owner.login}
         </Typography>
         <Typography variant="h5" component="h2">
-          {props.title}
+          {repo[0].title}
         </Typography>
         <Typography className={classes.pos} color="textSecondary">
-          {props.numOfStars + " stars"}
+          {repo[0].numOfStars}
         </Typography>
         <Typography variant="body2" component="p">
-          {props.description}
+          {repo[0].description}
           <br />
         </Typography>
       </CardContent>
       <CardActions>
         <Button size="small">
-          <Link to={`/repository/${props.repoId}`}> Learn More</Link>
+          <Link to={`/repository/${+repoId}`}> Learn More</Link>
         </Button>
         <Bookmark
           onClick={(repo) => props.bookmark(repo)}
-          isBookmarked={props.isBookmarked}
+          isBookmarked={repo[0].isBookmarked}
         />
       </CardActions>
     </Card>
