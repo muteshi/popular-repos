@@ -45,8 +45,8 @@ export default function RepoCard(props) {
         </Typography>
         <Typography className={classes.pos} color="textSecondary">
           {props.numOfStars
-            ? props.numOfStars + "stars"
-            : repoFromStorage.numOfStars + "stars"}
+            ? props.numOfStars + " stars"
+            : repoFromStorage.numOfStars + " stars"}
         </Typography>
         <Typography variant="body2" component="p">
           {props.description ? props.description : repoFromStorage.description}
