@@ -47,6 +47,10 @@ class Repositories extends Component {
     localStorage.setItem("repos", JSON.stringify(this.state.bookmarks));
   };
 
+  saveRepo = (repo) => {
+    localStorage.setItem("repo", JSON.stringify(repo));
+  };
+
   render() {
     const repos = this.state.bookmarks
       .sort((a, b) => b.numOfStars - a.numOfStars)
@@ -59,7 +63,7 @@ class Repositories extends Component {
             owner={repo.owner.login}
             title={repo.title}
             repoId={repo.id}
-            repoUrl={repo.url}
+            clicked={() => this.saveRepo(repo)}
             description={repo.description}
             numOfStars={repo.numOfStars}
             isBookmarked={repo.isBookmarked}
