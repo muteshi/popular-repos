@@ -7,7 +7,6 @@ import Typography from "@material-ui/core/Typography";
 import "font-awesome/css/font-awesome.min.css";
 import Bookmark from "./bookmark";
 import { Link } from "react-router-dom";
-import { useState } from "react";
 
 const useStyles = makeStyles({
   root: {
@@ -30,18 +29,6 @@ const useStyles = makeStyles({
 export default function RepoCard(props) {
   const classes = useStyles();
   const repoFromStorage = JSON.parse(localStorage.getItem("repo"));
-  const [repos, setRepos] = useState([]);
-  const [bookmarks, setBookmarks] = useState([]);
-
-  function bookmarked(repo) {
-    const reposFromStorage = JSON.parse(localStorage.getItem("repos") || "[]");
-    setRepos(reposFromStorage);
-    const newRepos = [...repos];
-    const index = newRepos.indexOf(repo);
-    newRepos[index].isBookmarked = !newRepos[index].isBookmarked;
-    setBookmarks(newRepos);
-    localStorage.setItem("repos", JSON.stringify(bookmarks));
-  }
 
   return (
     <Card className={classes.root} variant="outlined">
@@ -71,16 +58,8 @@ export default function RepoCard(props) {
           <Link to={`/repository/${props.repoId}`}> Learn More</Link>
         </Button>
         <Bookmark
-          onClick={
-            props.description
-              ? (repo) => props.bookmark(repo)
-              : (repo) => bookmarked(repo)
-          }
-          isBookmarked={
-            props.isBookmarked
-              ? props.isBookmarked
-              : repoFromStorage.isBookmarked
-          }
+          onClick={(repo) => props.bookmark(repo)}
+          isBookmarked={props.isBookmarked}
         />
       </CardActions>
     </Card>
